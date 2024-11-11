@@ -1,6 +1,6 @@
 import axios from "axios";
 import { safeParse } from "valibot";
-import { DraftProductSchema } from "../types";
+import { DraftProductSchema, ProductsSchema } from "../types";
 
 type ProductData = {
   [k: string]: FormDataEntryValue;
@@ -20,7 +20,22 @@ export async function addProduct(data: ProductData) {
       };
       await axios.post(url, bodyPost);
     } else {
-      throw new Error("Data no valid");
+      throw new Error("Data no valid on addProduct");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getProducts() {
+  const url = `${import.meta.env.VITE_API_URL}/api/products`;
+  try {
+    const { data } = await axios.get(url);
+    const result = safeParse(ProductsSchema, data.data);
+    if (result.success) {
+      return result.output;
+    } else {
+      throw new Error("Data no valid on getProducts");
     }
   } catch (error) {
     console.log(error);
